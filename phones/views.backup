@@ -1,0 +1,303 @@
+import urllib2
+from django.template import Template, RequestContext
+from django.shortcuts import render, render_to_response, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.views.generic.detail import DetailView
+from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import json
+
+from phones.models import Phone, Review
+from forms import UpdatePhoneForm
+from django.db import connection
+
+from select import PhoneQuery
+
+from pprint import pprint as pp
+
+def dictfetchall(cursor):
+    "Returns all rows from a cursor as a dict"
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
+
+def savePhone(phone):
+#    pq = PhoneQuery()
+#    pq.insert(phone)
+    cursor = connection.cursor()
+    try:
+        cursor.execute("INSERT INTO phones(\
+                model_number, ram, processor, manufacturer, system, screen_size, screen_resolution, battery_capacity, talk_time, camera_megapixels, price, weight, storage_options, dimensions) VALUES\
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                [
+                    phone.model_number, 
+                    phone.ram, 
+                    phone.processor, 
+                    phone.manufacturer, 
+                    phone.system, 
+                    phone.screen_size,
+                    phone.screen_resolution,
+                    phone.battery_capacity,
+                    phone.talk_time,
+                    phone.camera_megapixels,
+                    phone.price,
+                    phone.weight,
+                    phone.storage_options,
+                    phone.dimensions,
+                ]
+            )
+    except:
+        cursor.execute("UPDATE phones SET\
+            ram=%s,processor=%s,manufacturer=%s,system=%s,screen_size=%s, screen_resolution=%s, battery_capacity=%s, talk_time=%s, camera_megapixels=%s, price=%s, weight=%s, storage_options=%s, dimensions=%s\
+ \
+            WHERE model_number=%s;",
+                [
+                    phone.ram, 
+                    phone.processor, 
+                    phone.manufacturer, 
+                    phone.system, 
+                    phone.screen_size,
+                    phone.screen_resolution,
+                    phone.battery_capacity,
+                    phone.talk_time,
+                    phone.camera_megapixels,
+                    phone.price,
+                    phone.weight,
+                    phone.storage_options,
+                    phone.dimensions,
+                    phone.model_number, 
+                ]
+            )
+def deletePhone(request, model_number):
+#    pq = PhoneQuery()
+#    pq.delete_by_model_num(model_number)
+
+    model_number = model_number.decode('utf-8')
+    cursor = connection.cursor()
+    try:
+        cursor.execute("DELETE FROM phones\
+                    WHERE model_number=%s;" % model_number
+                )
+    except:
+        # silently ignore
+        print("except when deleting")
+        return render(request, 'phones/delete.tpl', {'model_number':model_number})
+
+class PhoneDetailView(DetailView):
+    model = Phone
+    template_name = 'phones/detail.tpl'
+
+# Create your views here.
+def allPhones(request):
+    phone_raw_qry = Phone.objects.raw('SELECT * FROM phones')
+    phone_all = []
+    for p in phone_raw_qry:
+        phone_all.append(p.toDict())
+    return HttpResponse(json.dumps(phone_all), content_type='application/json') 
+
+def getPhone(request):
+    model_num = request.GET.get('model_number')
+    phone_raw_qry = Phone.objects.raw('SELECT * FROM phones WHERE model_number = \"%s\"' % model_num)
+    phone_all = []
+    for p in phone_raw_qry:
+        print p
+        phone_all.append(p.toDict())
+    ret = phone_all[0] if len(phone_all) > 0 else None
+    print phone_raw_qry
+    print phone_all
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
+def index(request):
+#    pq = PhoneQuery()
+#    phone_list = pq.select(None)
+    PAGE_SIZE = 20
+    MAX_PAGE_LINK = 10
+    MID_PAGES = 5
+    phone_raw_qry = Phone.objects.raw('SELECT * FROM phones')
+    phone_all = []
+    for p in phone_raw_qry:
+        phone_all.append(p)
+
+    paginator = Paginator(phone_all, PAGE_SIZE)
+    page_str = request.GET.get('page')
+    try:
+        page = int(page_str)
+        phone_list = paginator.page(page)
+    except PageNotAnInteger:
+        phone_list = paginator.page(1)
+        page = 1
+    except EmptyPage:
+        phone_list = paginator.page(paginator.num_pages)
+        page = paginator.num_pages
+    except:
+        page = 1
+        phone_list = paginator.page(1)
+    
+    page_names = []
+    
+    if (paginator.num_pages > MID_PAGES*2 + 3):
+        mid_left = page - MID_PAGES
+        if mid_left < 1:
+            mid_left = 1
+
+        mid_right = page + MID_PAGES
+        if mid_right > paginator.num_pages:
+            mid_right = paginator.num_pages
+
+        if mid_left > 1:
+            page_names += ['...']
+
+        for i in range(mid_left, mid_right+1):
+            page_names += [i]
+
+        if mid_right < paginator.num_pages:
+            page_names += ['...']
+    else:
+        for i in range(1, paginator.num_pages+1):
+            page_names += [i]
+
+    page_prev = page - 1
+    page_next = page + 1
+
+    if page_next > paginator.num_pages:
+        page_next = -1
+    context = {
+            'phone_list' : phone_list,
+            'page_names' : page_names,
+            'page_prev' : page_prev,
+            'page_next' : page_next,
+            'page' : page,
+            }
+
+    return render(request, 'phones/index.tpl', context)
+
+def suggest(request):
+    kram2 = request.POST['q']
+    dict = {'ram':(500, 3000)}
+    rules = []
+    if 'ram' in dict:
+        rules += ["ram>{0} AND ram<{1} ".format(dict['ram')[0], dict['ram'][1])]
+
+    if len(rules) > 1:
+        rule_str = ' WHERE '
+        for r in range(len(rules)-1):
+            rule_str += rules[r]
+        rule_str += rules[-1]
+
+    qry = "SELECT s1.model_number, s1.image FROM (SELECT model_number, image FROM phones" +
+           rule_str + 
+           ") as s1 JOIN (SELECT s2.model_number FROM (SELECT model_number FROM text_reviews WHERE rating >= 4.0) as s2 JOIN (SELECT model_number FROM video_reviews WHERE rating >= 4.0) as s3 on s2.model_number = s3.model_number) as s4 ON s1.model_number = s4.model_number"
+    print qry
+    phone_list = Phone.objects.raw(qry)
+    print("phonelist", phone_list[0])
+    return render_to_response('phones/index.tpl', 
+                             {'phone_list': phone_list},context_instance=RequestContext(request))
+
+    
+
+
+def search(request):
+    key = request.POST['q']
+    qry = "SELECT * FROM phones WHERE model_number LIKE '%%%%%s%%%%'" % key
+    print qry
+    phone_list = Phone.objects.raw(qry)
+    print ("phonelist", connection.queries)
+    return render_to_response('phones/index.tpl', 
+                             {'phone_list': phone_list},context_instance=RequestContext(request))
+    
+def detail(request, model_number):
+    #phone = get_object_or_404(Phone, pk=model_number)
+    phone = Phone.objects.raw('SELECT * FROM phones WHERE model_number = \"%s\"' % model_number)
+    phone = phone[0]
+    #print phone
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM text_reviews WHERE model_number="%s";' % model_number) 
+    text_reviews =dictfetchall(cursor)
+    for row in text_reviews:
+        print(row)
+    cursor.close()
+
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM video_reviews WHERE model_number="%s";' % model_number) 
+    video_reviews =dictfetchall(cursor)
+    print(">>>VIDEO REVIEWS:")
+    for row in video_reviews:
+        print('video_reviews: ', row)
+    cursor.close()
+ 
+    return render(request, 'phones/detail.tpl', {'phone': phone, 'text_reviews':text_reviews, 'video_reviews':video_reviews})
+
+def addPhone(request):
+    return updatePhone(request, '')
+
+# update phone
+def updatePhone(request, model_number):
+    print('update', model_number)
+    model_number = model_number.decode('utf-8')
+    # model_number = urllib2.unquote(model_number)
+    print('update', model_number)
+    """
+    if not request.user.is_authenticated():
+        # not auth, give error page
+        raise Http404
+        form = UpdatePhoneForm()
+        return render(request, 'phones/updatePhone.tpl', {'form': form})
+    """    
+    if request.method=='POST':
+        form = UpdatePhoneForm(request.POST)
+        # pprint(request.POST)
+        #Phone(model_number='update', ram=1, processor='arm', manufacturer='me', system='sys', screen_size='1x1')
+        phone = Phone(
+                model_number=request.POST['model_number'],
+                ram=request.POST['ram'],
+                processor=request.POST['processor'],
+                manufacturer=request.POST['manufacturer'],
+                system=request.POST['system'],
+                screen_size=request.POST['screen_size'],
+                screen_resolution=request.POST['screen_resolution'],
+                battery_capacity=request.POST['battery_capacity'],
+                talk_time=request.POST['talk_time'],
+                camera_megapixels=request.POST['camera_megapixels'],
+                price=request.POST['price'],
+                weight=request.POST['weight'],
+                storage_options=request.POST['storage_options'],
+                dimensions=request.POST['dimensions'],
+            )
+        # TODO: sanity check
+        # phone.save()
+        savePhone(phone)
+        
+        print ("save phone:", connection.queries)
+        
+    elif str(model_number) != '':
+        name_map = {
+            'model_number':'model_number',
+            'ram':'ram',
+            'processor':'processor',
+            'manufacturer':'manufacturer',
+            'system':'system',
+            'screen_size':'screen_size',
+            'screen_resolution':'screen_resolution',
+            'battery_capacity':'battery_capacity',
+            'talk_time':'talk_time',
+            'camera_megapixels':'camera_megapixels',
+            'price':'price',
+            'weight':'weight',
+            'storage_options':'storage_options',
+            'dimensions':'dimensions',
+            }
+
+        key = model_number
+        phone = Phone.objects.raw('SELECT * FROM phones WHERE model_number=\"{0}\"'.format(model_number), translations=name_map)
+        print(phone)
+        phone = phone[0]
+        print(phone)
+            
+        form = UpdatePhoneForm(phone.toDict())
+    else:
+        form = UpdatePhoneForm()
+        
+    return render(request, 'phones/updatePhone.tpl', {'form': form})
+

@@ -1,0 +1,17 @@
+name: HTC One (M8) max, ram: 3072 MB RAM
+name: Sony Xperia Z3X, ram: 4096 MB RAM
+name: Lenovo S856, ram: 1024 MB RAM
+name: LG F60, ram: 1024 MB RAM
+name: Samsung Galaxy Grand Prime, ram: 1024 MB RAM
+name: Micromax Bolt A064, ram: None
+name: Micromax Canvas 4 plus, ram: 1024 MB RAM
+name: BLU Win HD, ram: 1024 MB RAM
+name: Micromax Canvas Duet II, ram: 1024 MB RAM
+name: Micromax Canvas A1, ram: 1024 MB RAM
+name: Micromax Canvas Nitro, ram: 2048 MB RAM
+name: Samsung Galaxy Core Prime, ram: 1024 MB RAM
+name: Samsung Galaxy Alpha A5, ram: 2048 MB RAM
+name: Micromax Canvas Duet, ram: 1024 MB RAM
+name: ZTE Grand X Max, ram: 1024 MB RAM
+name: LG TRIBUTE, ram: 1024 MB RAM
+name: Samsung Galaxy Alpha A3, ram: 1024 MB RAM

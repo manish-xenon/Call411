@@ -1,0 +1,79 @@
+name: HTC One (M8) max, ram: 3072 MB RAM
+name: Samsung Galaxy S5 Plus, ram: 2048 MB RAM
+name: Micromax Bolt A064, ram: None
+name: Sony Xperia Z3X, ram: 4096 MB RAM
+name: Micromax Canvas 4 plus, ram: 1024 MB RAM
+name: LG F60, ram: 1024 MB RAM
+name: Samsung Galaxy Grand Prime, ram: 1024 MB RAM
+name: BLU Win HD, ram: 1024 MB RAM
+name: Micromax Canvas Duet II, ram: 1024 MB RAM
+name: Micromax Canvas A1, ram: 1024 MB RAM
+name: Samsung Galaxy Alpha A5, ram: 2048 MB RAM
+name: Micromax Canvas Nitro, ram: 2048 MB RAM
+name: Micromax Canvas Duet, ram: 1024 MB RAM
+name: ZTE Grand X Max, ram: 1024 MB RAM
+name: Samsung Galaxy Core Prime, ram: 1024 MB RAM
+name: LG TRIBUTE, ram: 1024 MB RAM
+name: Micromax Bolt A065, ram: 512 MB RAM
+name: HTC Desire EYE, ram: 2048 MB RAM
+name: Micromax Canvas Entice, ram: 512 MB RAM
+name: LG Envoy III, ram: None
+name: Alcatel OneTouch POP Icon, ram: 1024 MB RAM
+name: Motorola DROID Turbo, ram: 3072 MB RAM
+name: Ericsson T28 World, ram: None
+name: Ericsson I 888, ram: None
+name: Nokia 5165, ram: None
+name: Spice Mobile Smart Flo Mettle 5X, ram: 512 MB RAM
+name: Samsung Gusto 3, ram: 64 MB RAM
+name: Acer Liquid X1, ram: 2048 MB RAM
+name: Nokia Lumia 530, ram: 512 MB RAM
+name: Samsung Galaxy Alpha A3, ram: 1024 MB RAM
+name: Huawei Ascend Mate7, ram: 3072 MB RAM
+name: Huawei Ascend G7, ram: 2048 MB RAM
+name: ZTE Kis 3 Max, ram: 512 MB RAM
+name: ZTE Blade Vec 3G, ram: 1024 MB RAM
+name: Motorola Moto X (2014), ram: 2048 MB RAM
+name: ZTE Blade Vec 4G, ram: 1024 MB RAM
+name: Alcatel OneTouch Hero 2, ram: 2048 MB RAM
+name: ZTE Z432, ram: 128 MB RAM
+name: Alcatel OneTouch Hero 8, ram: 2048 MB RAM
+name: Panasonic Toughpad FZ-X1, ram: 2048 MB RAM
+name: CAT B15Q, ram: 1024 MB RAM
+name: Lenovo A606, ram: 1024 MB RAM
+name: Dell Venue 8 7000, ram: 2048 MB RAM
+name: Huawei Ascend Y550, ram: 1024 MB RAM
+name: ZTE Compel, ram: 1024 MB RAM
+name: Sonim XP5560 BOLT 2, ram: 128 MB RAM
+name: Sonim XP3340 SENTINEL Z1, ram: None
+name: Sonim XP3405 SHIELD, ram: None
+name: OPPO R1S, ram: 1024 MB RAM
+name: LG L Fino, ram: 1024 MB RAM
+name: LG L Bello, ram: 1024 MB RAM
+name: Samsung SM-G8508S, ram: None
+name: Alcatel OneTouch POP D1, ram: 512 MB RAM
+name: LG G3 Stylus, ram: 1024 MB RAM
+name: Motorola Luge, ram: 1024 MB RAM
+name: OPPO Neo 5, ram: 1024 MB RAM
+name: HTC Desire 510, ram: 1024 MB RAM
+name: Alcatel OneTouch Evolve 2, ram: 512 MB RAM
+name: Micromax Canvas Win, ram: 1024 MB RAM
+name: Micromax Canvas XL2, ram: 1024 MB RAM
+name: Micromax Canvas L, ram: 1024 MB RAM
+name: Micromax Canvas Gold, ram: 2048 MB RAM
+name: Meizu MX4, ram: 2048 MB RAM
+name: Lenovo Tab S8-50, ram: 2048 MB RAM
+name: Samsung Galaxy Note 4, ram: 3072 MB RAM
+name: Acer Liquid Z500, ram: 1024 MB RAM
+name: HTC Desire 820, ram: 2048 MB RAM
+name: Nokia Lumia 830, ram: 1024 MB RAM
+name: Nokia Lumia 735, ram: 1024 MB RAM
+name: Nokia Lumia 730, ram: 1024 MB RAM
+name: Samsung Galaxy Centura, ram: 512 MB RAM
+name: BlackBerry Passport, ram: 3072 MB RAM
+name: Samsung Galaxy Avant, ram: 1536 MB RAM
+name: LG L30, ram: 512 MB RAM
+name: Kyocera Hydro Life, ram: 1536 MB RAM
+name: LG L20, ram: 512 MB RAM
+name: Samsung SM-G739F, ram: 1331 MB RAM
+name: LG Revere 3, ram: 128 MB RAM
+name: Nokia 130, ram: None
